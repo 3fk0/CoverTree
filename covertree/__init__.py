@@ -1,1 +1,1 @@
-from covertree import CoverTree
+from .tree import CoverTree

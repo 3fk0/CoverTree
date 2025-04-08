@@ -1,0 +1,13 @@
+AUTHORS
+LICENSE
+README.md
+setup.py
+covertree/__init__.py
+covertree/covertree.py
+covertree.egg-info/PKG-INFO
+covertree.egg-info/SOURCES.txt
+covertree.egg-info/dependency_links.txt
+covertree.egg-info/requires.txt
+covertree.egg-info/top_level.txt
+src/cover_tree/cover_tree.cpp
+src/cover_tree/covertreecmodule.cxx

@@ -1,0 +1,11 @@
+Metadata-Version: 2.2
+Name: covertree
+Version: 1.0
+Summary: Cover Tree -- fast search
+License-File: LICENSE
+License-File: AUTHORS
+Requires-Dist: numpy>=1.13.1
+Requires-Dist: scipy>=0.17
+Requires-Dist: scikit-learn>=0.18.1
+Dynamic: requires-dist
+Dynamic: summary
