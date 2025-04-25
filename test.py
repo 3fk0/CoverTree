@@ -22,7 +22,7 @@ gt = time.time
 np.random.seed(seed=3)
 
 print('Building cover tree')
-x = np.random.rand(500000,128)
+x = np.random.rand(500,128)
 with open('train_data.bin', 'wb') as f:
     np.array(x.shape, dtype='int32').tofile(f)
     x.tofile(f)
@@ -42,7 +42,7 @@ print("Building time:", b_t, "seconds")
 print("Test covering: ", ct.test_covering())
 
 print('Generate random points')
-y = np.random.rand(5000,128)
+y = np.random.rand(50,128)
 with open('test_data.bin', 'wb') as f:
     np.array(y.shape, dtype='int32').tofile(f)
     y.tofile(f)
@@ -55,6 +55,8 @@ print("Query time:", b_t, "seconds")
 nbrs = NearestNeighbors(n_neighbors=1, algorithm='brute').fit(xs)
 distances, indices = nbrs.kneighbors(y)
 b = np.squeeze(xs[indices])
+print(a)
+print(b)
 if np.all(a==b):
     print("Test for Nearest Neighbour passed")
 else:

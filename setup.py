@@ -30,8 +30,8 @@ class build_ext(_build_ext):
 covertreec_module = Extension('covertreec',
         sources = ['src/cover_tree/covertreecmodule.cxx',  'src/cover_tree/cover_tree.cpp'],
         include_dirs=['lib/'],
-        extra_compile_args=['-march=corei7-avx', '-pthread', '-std=c++14'],
-        extra_link_args=['-march=corei7-avx', '-pthread', '-std=c++14'] #'-DPRINTVER']
+        extra_compile_args=['-march=core-avx2', '-pthread', '-std=c++14'],
+        extra_link_args=['-march=core-avx2', '-pthread', '-std=c++14'] #'-DPRINTVER']
 )
 setup ( name = 'covertree',
     version = '1.0',

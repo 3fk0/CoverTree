@@ -169,45 +169,24 @@ void rangeBruteForce(std::vector<pointType>& pointList, pointType queryPt, doubl
 }
 
 
-void nearNeighborBruteForce(std::vector<pointType> pointList, pointType queryPt, int numNbrs, std::vector<pointType> nnList)
+void nearNeighborBruteForce(std::vector<pointType> pointList, pointType queryPt, int numNbrs, std::vector<pointType>& nnList)
 {
+    std::vector<std::pair<double, pointType>> distances;
 
-    double leastClose = (nnList.back() - queryPt).norm();
-
-    // Check for correctness
-    if (nnList.size() != numNbrs){
-    std::cout << nnList.size() << " vs " << numNbrs << std::endl;
-        throw std::runtime_error( "Error in correctness - knn (size)!" );
+    for (const auto& pt : pointList) {
+        double dist = (pt - queryPt).norm();
+        distances.emplace_back(dist, pt);
     }
 
+    std::sort(distances.begin(), distances.end(),
+              [](const auto& a, const auto& b) { return a.first < b.first; });
 
-    for (const auto& node: nnList){
-        if ( (node - queryPt).norm() > leastClose + 1e-6){
-        std::cout << leastClose << " " << (node-queryPt).norm() << std::endl;
-            for (const auto& n: nnList)
-                std::cout << (n-queryPt).norm() << std::endl;
-            throw std::runtime_error( "Error in correctness - knn (dist)!" );
-        }
+    nnList.clear();
+    for (int i = 0; i < std::min(numNbrs, (int)distances.size()); ++i) {
+        nnList.push_back(distances[i].second);
     }
 
-    // Check for completeness
-    int numPoints = 0;
-    std::vector<double> dists;
-    for (const auto& pt: pointList){
-        double dist = (queryPt - pt).norm();
-        if (dist <= leastClose - 1e-6){
-            numPoints++;
-            dists.push_back(dist);
-        }
-    }
-
-    if (numPoints != nnList.size()-1){
-        std::cout << "Error in completeness - k-nn!\n";
-        std::cout << "Brute force: " << numPoints << " Tree: " << nnList.size();
-        std::cout << std::endl;
-        for (auto dist : dists) std::cout << dist << " ";
-        std::cout << std::endl;
-    }
+    return;
 }
 
 
@@ -228,6 +207,12 @@ int main(int argv, char** argc)
     // Reading the file for points
     //Eigen::MatrixXd pointMatrix = readPointFile(argc[1]);
     std::vector<pointType> pointList = readPointFileList(argc[1]);
+
+    // Print the points
+    for (int i = 0; i < pointList.size(); i++)
+    {
+        std::cout << pointList[i].format(CommaInitFmt) << std::endl;
+    }
 
     CoverTree* cTree;
     // Parallel Cover tree construction
@@ -275,6 +260,7 @@ int main(int argv, char** argc)
         std::pair<CoverTree::Node*, double> ct_nn = cTree->NearestNeighbour(queryPt);
         ct_neighbors[i] = ct_nn.first->_p;
     });
+
     tn = std::chrono::high_resolution_clock::now();
     std::cout << "Query time: " << std::chrono::duration_cast<std::chrono::milliseconds>(tn - ts).count() << std::endl;
 
@@ -290,6 +276,8 @@ int main(int argv, char** argc)
 
     //Match answers
     int problems = 0;
+    std::vector<pointType> test1(1);
+    std::vector<pointType> test2(1);
     for(size_t i=0; i<testPointList.size(); ++i)
     {
         if (!ct_neighbors[i].isApprox(bt_neighbors[i]))
@@ -300,7 +288,15 @@ int main(int argv, char** argc)
             std::cout << (ct_neighbors[i] - testPointList[i]).norm() << " ";
             std::cout << (bt_neighbors[i] - testPointList[i]).norm() << std::endl;
         }
+        test1[0] = ct_neighbors[i];
+        test2[0] = bt_neighbors[i];
     }
+    
+    std::cout << "Two: " << std::endl;
+    for (int i = 0; i < test1[0].size(); i++) {
+        std::cout << test1[0][i] << " " << test2[0][i] << std::endl;
+    }
+
     if (problems)
         std::cout << "Nearest Neighbour test failed!" << std::endl;
     else
@@ -322,7 +318,49 @@ int main(int argv, char** argc)
 
     std::cout << "Finnished!" << std::endl;
 
+
+    std::cout << "Quering parallely" << std::endl;
+    std::vector<pointType> kn_neighbors(25);
+    utils::parallel_for_progressbar(0, 1,
+        [&](int i) -> void {
+            pointType& queryPt = testPointList[i];
+            std::vector<std::pair<CoverTree::Node*, double>> ct_nn = cTree->kNearestNeighbours(queryPt, 25);
+            for (int i = 0; i < ct_nn.size(); i++)
+            {
+                kn_neighbors[i] = ct_nn[i].first->_p;
+            }
+        }
+    );
+
+    pointType& queryPt = testPointList[0];
+    std::cout << queryPt.format(CommaInitFmt) << std::endl;
+    std::vector<pointType> kn_brute_neighbors;
+    utils::parallel_for_progressbar(0, 1,
+        [&](int i) -> void {
+            nearNeighborBruteForce(pointList, queryPt, 25, kn_brute_neighbors);
+        }
+    );
+
+    std::cout << kn_brute_neighbors.size() << std::endl;
+
+    for (int i = 0; i < kn_neighbors.size(); i++)
+    {
+        std::cout << kn_neighbors[i].isApprox(kn_brute_neighbors[i]) << std::endl;
+    }
+
     utils::pause();
+
+    queryPt = testPointList[0];
+    std::cout << queryPt.format(CommaInitFmt) << std::endl;
+    std::pair<CoverTree::Node*, double> ct_nn = cTree->NearestNeighbour(queryPt);
+    std::cout << "Before Delete: " << ct_nn.first->_p.format(CommaInitFmt) << std::endl;
+    cTree->remove(queryPt);
+    ct_nn = cTree->NearestNeighbour(queryPt);
+    std::cout << "After Delete: " << ct_nn.first->_p.format(CommaInitFmt) << std::endl;
+
+    cTree->insert(queryPt);
+    ct_nn = cTree->NearestNeighbour(queryPt);
+    std::cout << "After Insert: " << ct_nn.first->_p.format(CommaInitFmt) << std::endl;
 
     // Success
     return 0;

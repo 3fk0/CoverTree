@@ -3,7 +3,7 @@ LICENSE
 README.md
 setup.py
 covertree/__init__.py
-covertree/covertree.py
+covertree/tree.py
 covertree.egg-info/PKG-INFO
 covertree.egg-info/SOURCES.txt
 covertree.egg-info/dependency_links.txt
