@@ -1,18 +1,6 @@
 #include "input_control.h"
 
-CoverTree* cover_tree_build(std::vector<pointType> pointList) {
-    std::chrono::high_resolution_clock::time_point ts, tn;
-    CoverTree* cTree;
 
-    ts = std::chrono::high_resolution_clock::now();
-    
-    cTree = CoverTree::from_points(pointList, -1, false);
-
-    tn = std::chrono::high_resolution_clock::now();
-
-    std::cout << "Build time: " << std::chrono::duration_cast<std::chrono::milliseconds>(tn - ts).count() << std::endl;
-    return cTree;
-}
 
 
 input_operation* parse_input(int argc, char* argv[]) {

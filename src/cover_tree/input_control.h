@@ -23,5 +23,3 @@ input_operation* parse_input(int argc, char* argv[]);
 void input_operation_destructor(input_operation* op);
 
 void help();
-
-CoverTree* cover_tree_build(std::vector<pointType> pointList);
