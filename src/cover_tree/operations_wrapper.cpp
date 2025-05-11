@@ -10,7 +10,7 @@ CoverTree* cover_tree_build(std::vector<pointType> pointList) {
 
     tn = std::chrono::high_resolution_clock::now();
 
-    std::cout << "Build time: " << std::chrono::duration_cast<std::chrono::milliseconds>(tn - ts).count() << std::endl;
+    std::cout << "Build time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count() << std::endl;
     return cTree;
 }
 
@@ -26,7 +26,7 @@ void nearNeighbor(CoverTree* cTree, std::vector<pointType>& testPointList) {
         ct_neighbors[i] = ct_nn.first->_p;
     }
     tn = std::chrono::high_resolution_clock::now();
-    std::cout << "Query time: " << std::chrono::duration_cast<std::chrono::milliseconds>(tn - ts).count() << std::endl;
+    std::cout << "Query time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count() << std::endl;
 }
 
 
@@ -48,7 +48,7 @@ void kNearNeighbors(CoverTree* cTree, int kSize, std::vector<pointType>& testPoi
     tn = std::chrono::high_resolution_clock::now();
 
     
-    std::cout << "Query time: " << std::chrono::duration_cast<std::chrono::milliseconds>(tn - ts).count() << std::endl;
+    std::cout << "Query time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count() << std::endl;
     for (int i = 0; i < ct_neighbors.size(); i++) {
         resultPrint(i, ct_neighbors[i]);
     }
@@ -76,7 +76,7 @@ void insertPoints(CoverTree* cTree, std::vector<pointType>& insertPointList) {
     }
     tn = std::chrono::high_resolution_clock::now();
 
-    std::cout << "Insert time: " << std::chrono::duration_cast<std::chrono::milliseconds>(tn - ts).count() << std::endl;
+    std::cout << "Insert time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count() << std::endl;
 }
 
 
@@ -92,5 +92,5 @@ void deletePoints(CoverTree* cTree, std::vector<pointType>& deletePointList) {
     }
     tn = std::chrono::high_resolution_clock::now();
 
-    std::cout << "Delete time: " << std::chrono::duration_cast<std::chrono::milliseconds>(tn - ts).count() << std::endl;
+    std::cout << "Delete time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count() << std::endl;
 }
