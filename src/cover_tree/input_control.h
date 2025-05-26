@@ -20,6 +20,7 @@ struct input_operation {
 
 
 input_operation* parse_input(int argc, char* argv[]);
+
 void input_operation_destructor(input_operation* op);
 
 void help();

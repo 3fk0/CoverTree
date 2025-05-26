@@ -191,11 +191,11 @@ protected:
     void PrePost(Node*& current, char*& pre, char*& post);
 
     /*** debug functions ***/
-    unsigned msg_size() const;
     void calc_maxdist();                            //find true maxdist
     void generate_id(Node* current);                //Generate IDs for each node from root as 0
-
+    
 public:
+    unsigned msg_size() const;
     /*** Internal Contructors ***/
     /*** Constructor: needs at least 1 point to make a valid cover-tree ***/
     // NULL tree

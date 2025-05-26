@@ -1,8 +1,5 @@
 #include "input_control.h"
 
-
-
-
 input_operation* parse_input(int argc, char* argv[]) {
     if (argc < 2) {
         throw std::runtime_error("[Input Control]: Not enough arguments");
@@ -45,7 +42,7 @@ void input_operation_destructor(input_operation* op) {
 }
 
 void help() {
-    std::cout << "Usage: ./main -b <path_to_train_points> [-q <path_to_test_points> -i <path_to_insert_points> -d <path_to_delete_points>]" << std::endl;
+    std::cout << "Usage: ./main -b <path_to_train_points> [[-q <path_to_test_points>] [-i <path_to_insert_points>] [-d <path_to_delete_points>]]" << std::endl;
     std::cout << "Options:" << std::endl;
     std::cout << "-b : Build the cover tree from the given points" << std::endl;
     std::cout << "-q : Query the cover tree with the given points" << std::endl;

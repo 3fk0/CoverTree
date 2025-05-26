@@ -108,8 +108,6 @@ int main(int argv, char** argc)
 {
     Eigen::setNbThreads(1);
     Eigen::IOFormat CommaInitFmt(Eigen::StreamPrecision, Eigen::DontAlignCols, ", ", ", ", "", "", "[", "]");
-
-    
     
     input_operation* ops = parse_input(argv, argc);
     CoverTree* cTree;
@@ -125,13 +123,13 @@ int main(int argv, char** argc)
                 cTree = cover_tree_build(pointList);
                 break;
             case QUERY:
-                kNearNeighbors(cTree, 25, pointList);
+                kNearNeighbors(cTree, 10, pointList, i);
                 break;
             case INSERT:
-                insertPoints(cTree, pointList);
+                insertPoints(cTree, pointList, i);
                 break;
             case DELETE:
-                deletePoints(cTree, pointList);
+                deletePoints(cTree, pointList, i);
                 break;
             default:
                 throw std::runtime_error("Unknown operation");
