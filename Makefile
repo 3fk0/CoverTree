@@ -38,24 +38,24 @@ llvm: dir compile
 dir:
 	@echo Setting up directories
 	@mkdir -p $(BUILDDIR)
-	@mkdir -p dist
+	@mkdir -p ./
 	
 
 compile: $(SOURCES)
 
 $(SOURCES): $(CURR_DIR)/src/% : $(CURR_DIR)/src/%/makefile
-	@cd $@ && make $(CTYPE) SOURCEDIR=$@ BUILDDIR=$(CURR_DIR)/build/$* EXECUTABLE=$(CURR_DIR)/dist/$*
+	@cd $@ && make $(CTYPE) SOURCEDIR=$@ BUILDDIR=$(CURR_DIR)/build/$* EXECUTABLE=$(CURR_DIR)/./$*
 	@echo
 
 clean:
 	rm -rf $(BUILDDIR)
-	rm -rf dist/*
+	@echo "Note: Binaries are now created in parent directory. Clean them manually if needed."
 
 $(PROGS): % : $(CURR_DIR)/src/%/makefile
 	@mkdir -p $(CURR_DIR)/build/$@
-	@cd $(CURR_DIR)/src/$@ && make $(CTYPE) SOURCEDIR=$(CURR_DIR)/src/$@ BUILDDIR=$(CURR_DIR)/build/$@ EXECUTABLE=$(CURR_DIR)/dist/$@
+	@cd $(CURR_DIR)/src/$@ && make $(CTYPE) SOURCEDIR=$(CURR_DIR)/src/$@ BUILDDIR=$(CURR_DIR)/build/$@ EXECUTABLE=$(CURR_DIR)/./$@
 	@echo
 
 $(CLEAN_PROGS): clean-% : $(CURR_DIR)/src/%/makefile
 	rm -rf build/$(subst clean-,,$@)
-	rm -rf dist/$(subst clean-,,$@)
+	rm -f ./$(subst clean-,,$@)
