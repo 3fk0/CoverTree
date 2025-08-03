@@ -80,8 +80,5 @@ std::vector<pointType> readPointFileList(std::string fileName)
     }
     // Close the file
     fin.close();
-
-    std::cout<<pointList[0][0] << " " << pointList[0][1] << " " << pointList[1][0] << std::endl;
-
     return pointList;
 }

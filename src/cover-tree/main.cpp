@@ -116,9 +116,6 @@ int main(int argv, char** argc)
     int insertID = 0;
 
     for (int i = 0; i < argv - 1; i += 2) {
-        std::cout << "Operation: " << ops[i].type << std::endl;
-        std::cout << "Vector file: " << ops[i].vector_file << std::endl;
-
         std::vector<pointType> pointList = readPointFileList(ops[i].vector_file);
         
         switch (ops[i].type) {
