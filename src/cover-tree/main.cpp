@@ -111,6 +111,9 @@ int main(int argv, char** argc)
     
     input_operation* ops = parse_input(argv, argc);
     CoverTree* cTree;
+    int queryID = 0;
+    int deleteID = 0;
+    int insertID = 0;
 
     for (int i = 0; i < argv - 1; i += 2) {
         std::cout << "Operation: " << ops[i].type << std::endl;
@@ -123,13 +126,13 @@ int main(int argv, char** argc)
                 cTree = cover_tree_build(pointList);
                 break;
             case QUERY:
-                kNearNeighbors(cTree, 10, pointList, i);
+                kNearNeighbors(cTree, pointList, queryID++);
                 break;
             case INSERT:
-                insertPoints(cTree, pointList, i);
+                insertPoints(cTree, pointList, insertID++);
                 break;
             case DELETE:
-                deletePoints(cTree, pointList, i);
+                deletePoints(cTree, pointList, deleteID++);
                 break;
             default:
                 throw std::runtime_error("Unknown operation");

@@ -16,28 +16,30 @@ CoverTree* cover_tree_build(std::vector<pointType> pointList) {
 }
 
 
-void kNearNeighbors(CoverTree* cTree, int kSize, std::vector<pointType>& testPointList, int queryID) {
+void kNearNeighbors(CoverTree* cTree, std::vector<pointType>& testPointList, int queryID) {
     std::chrono::high_resolution_clock::time_point ts, tn;
     std::vector<std::vector<pointType>> ct_neighbors(testPointList.size());
     Eigen::IOFormat CommaInitFmt(Eigen::StreamPrecision, Eigen::DontAlignCols, ", ", ", ", "", "", "", "");
 
-    for (int i = 0; i < testPointList.size(); ++i) {
-        std::cout << "Query " << queryID << "." << i << std::endl;
-        ts = std::chrono::high_resolution_clock::now();
-
-        pointType& queryPt = testPointList[i];
-        std::vector<std::pair<CoverTree::Node*, double>> ct_nn = cTree->kNearestNeighbours(queryPt, kSize);
-
-        tn = std::chrono::high_resolution_clock::now();
-
-        std::vector<pointType> nnList(ct_nn.size());
-        for (int j = 0; j < ct_nn.size(); j++) {
-            std::cout << ct_nn[j].first->_p.format(CommaInitFmt) << std::endl;
+    for (int k = 0; k < 100; k += 5) {
+        for (int i = 0; i < testPointList.size(); ++i) {
+            std::cout << "Query " << queryID << "." << i << "." << (k == 0 ? 1 : k) << std::endl;
+            ts = std::chrono::high_resolution_clock::now();
+    
+            pointType& queryPt = testPointList[i];
+            std::vector<std::pair<CoverTree::Node*, double>> ct_nn = cTree->kNearestNeighbours(queryPt, k == 0 ? 1 : k);
+    
+            tn = std::chrono::high_resolution_clock::now();
+    
+            std::vector<pointType> nnList(ct_nn.size());
+            for (int j = 0; j < ct_nn.size(); j++) {
+                std::cout << ct_nn[j].first->_p.format(CommaInitFmt) << std::endl;
+            }
+    
+            std::cout << "Query time: "
+                      << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count()
+                      << std::endl;
         }
-
-        std::cout << "Query time: "
-                  << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count()
-                  << std::endl;
     }
 }
 
@@ -54,6 +56,7 @@ void insertPoints(CoverTree* cTree, std::vector<pointType>& insertPointList, int
     tn = std::chrono::high_resolution_clock::now();
 
     std::cout << "Insert time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count() << std::endl;
+    std::cout << "Size: " << cTree->msg_size() << " after INSERT - " << insertID << std::endl;
 }
 
 
@@ -69,6 +72,5 @@ void deletePoints(CoverTree* cTree, std::vector<pointType>& deletePointList, int
     }
     tn = std::chrono::high_resolution_clock::now();
     std::cout << "Delete time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count() << std::endl;
-    std::cout << "Index size: " << cTree->msg_size() << std::endl;
-
+    std::cout << "Size: " << cTree->msg_size() << " after DELETE - " << deleteID << std::endl;
 }
