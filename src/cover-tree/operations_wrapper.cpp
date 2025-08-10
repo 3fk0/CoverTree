@@ -33,7 +33,13 @@ void kNearNeighbors(CoverTree* cTree, std::vector<pointType>& testPointList, int
     
             std::vector<pointType> nnList(ct_nn.size());
             for (int j = 0; j < ct_nn.size(); j++) {
-                std::cout << ct_nn[j].first->_p.format(CommaInitFmt) << std::endl;
+                const pointType& point = ct_nn[j].first->_p;
+                
+                if (point.size() == 0) {
+                    continue;
+                } else {
+                    std::cout << point.format(CommaInitFmt) << std::endl;
+                }
             }
     
             std::cout << "Query time: "
@@ -46,7 +52,6 @@ void kNearNeighbors(CoverTree* cTree, std::vector<pointType>& testPointList, int
 
 void insertPoints(CoverTree* cTree, std::vector<pointType>& insertPointList, int insertID) {
     std::chrono::high_resolution_clock::time_point ts, tn;
-    std::cout << "Insert " << insertID << std::endl;
     ts = std::chrono::high_resolution_clock::now();
 
     for (int i = 0; i < insertPointList.size(); ++i) {
@@ -62,7 +67,6 @@ void insertPoints(CoverTree* cTree, std::vector<pointType>& insertPointList, int
 
 void deletePoints(CoverTree* cTree, std::vector<pointType>& deletePointList, int deleteID) {
     std::chrono::high_resolution_clock::time_point ts, tn;
-    std::cout << "Delete " << deleteID << std::endl;
     ts = std::chrono::high_resolution_clock::now();
     
     for (int i = 0; i < deletePointList.size(); ++i) {

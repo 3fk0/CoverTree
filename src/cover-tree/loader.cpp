@@ -14,12 +14,8 @@ Eigen::MatrixXd readPointFile(std::string fileName)
     fin.read((char *)&numPoints, sizeof(int));
     fin.read((char *)&numDims, sizeof(int));
 
-    // Printing for debugging
-    std::cout << "\nNumber of points: " << numPoints << "\nNumber of dims : " << numDims << std::endl;
-
     // Matrix of points
     Eigen::MatrixXd pointMatrix(numDims, numPoints);
-    std::cout<<"IsRowMajor?: "<<pointMatrix.IsRowMajor << std::endl;
 
     // Read the points, one by one
     double *tmp_point = new double[numDims];
@@ -34,9 +30,6 @@ Eigen::MatrixXd readPointFile(std::string fileName)
     }
     // Close the file
     fin.close();
-
-    std::cout<<pointMatrix.rows() << " " << pointMatrix.cols() << std::endl;
-    std::cout<<pointMatrix(0,0) << " " << pointMatrix(0,1) << " " << pointMatrix(1,0) << std::endl;
 
     return pointMatrix;
 }
@@ -54,9 +47,6 @@ std::vector<pointType> readPointFileList(std::string fileName)
     unsigned numDims = 0;
     fin.read((char *)&numPoints, sizeof(int));
     fin.read((char *)&numDims, sizeof(int));
-
-    // Printing for debugging
-    std::cout << "\nNumber of points: " << numPoints << "\nNumber of dims : " << numDims << std::endl;
 
     // List of points
     std::vector<pointType> pointList;

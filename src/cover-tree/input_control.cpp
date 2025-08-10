@@ -4,7 +4,6 @@ input_operation* parse_input(int argc, char* argv[]) {
     if (argc < 2) {
         throw std::runtime_error("[Input Control]: Not enough arguments");
     }
-    std::cout << argv[1] << std::endl;
     if (argv[1] != std::string("-b")) {
         throw std::runtime_error("[Input Control]: First operation must be -b");
     }

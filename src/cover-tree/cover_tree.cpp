@@ -69,7 +69,7 @@ bool CoverTree::insert(CoverTree::Node* current, const pointType& p)
             // release read lock then enter child
             current->mut.unlock_shared();
             flag = false;
-            std::cout << "Duplicate entry!!!" << std::endl;
+            // std::cout << "Duplicate entry!!!" << std::endl;
             break;
         }
         else if (dist_child <= child->covdist())
@@ -120,7 +120,7 @@ bool CoverTree::insert(CoverTree::Node* current, const pointType& p)
 bool CoverTree::insert(CoverTree::Node* current, CoverTree::Node* p)
 {
     bool result = false;
-    std::cout << "Node insert called!";
+    // std::cout << "Node insert called!";
 #ifdef DEBUG
     if (current->dist(p) > current->covdist())
         throw std::runtime_error("Internal insert got wrong input!");
@@ -210,8 +210,8 @@ bool CoverTree::insert(const pointType& p)
     if (root->dist(p) > root->covdist())
     {
         global_mut.unlock_shared();
-        std::cout<<"Entered case 1: " << root->dist(p) << " " << root->covdist() << " " << root->level <<std::endl;
-        std::cout<<"Requesting global lock!" <<std::endl;
+        // std::cout<<"Entered case 1: " << root->dist(p) << " " << root->covdist() << " " << root->level <<std::endl;
+        // std::cout<<"Requesting global lock!" <<std::endl;
         global_mut.lock();
         while (root->dist(p) > base * root->covdist()/(base-1))
         {
@@ -276,7 +276,7 @@ bool CoverTree::remove(const pointType &p)
         CoverTree::Node* parent_p = node_p->parent;
         if (node_p == root)
         {
-            std::cout << "Sorry can not delete root efficiently!" << std::endl;
+            // std::cout << "Sorry can not delete root efficiently!" << std::endl;
         }
         else
         {
@@ -716,14 +716,12 @@ CoverTree::CoverTree(std::vector<pointType>& pList, int begin, int end, int trun
     std::iota(std::begin(idx), std::end(idx), 0);
     auto comp_x = [&dists](int a, int b) { return dists[a] > dists[b]; };
     std::sort(std::begin(idx), std::end(idx), comp_x);
-    std::cout<<"Max distance: " << dists[idx[0]] << std::endl;
 
     //4. Compute distance of every point from the mediod
     mx = pList[idx[0]];
     dists = utils::ParallelDistanceComputeList(pList, mx).get_result();
 
     int scale_val = std::ceil(std::log(dists.maxCoeff())/std::log(base));
-    std::cout<<"Scale chosen: " << scale_val << std::endl;
     pointType temp = pList[idx[0]];
     min_scale = scale_val; //-1000;
     max_scale = scale_val; //-1000;
@@ -738,14 +736,14 @@ CoverTree::CoverTree(std::vector<pointType>& pList, int begin, int end, int trun
 
     int run_till = 50000 < end ? 50000 : end;
     for (int i = 1; i < run_till; ++i){
-        utils::progressbar(i, run_till);
+        // utils::progressbar(i, run_till);
         if(!insert(pList[idx[i]]))
             std::cout << "Insert failed!!!" << std::endl;
     }
-    utils::progressbar(run_till, run_till);
-    std::cout<<std::endl;
+    // utils::progressbar(run_till, run_till);
+    // std::cout<<std::endl;
 
-    std::cout << pList[0].rows() << ", " << pList.size() << std::endl;
+    // std::cout << pList[0].rows() << ", " << pList.size() << std::endl;
 
     utils::parallel_for_progressbar(50000,end,[&](int i)->void{
     //for (int i = 50000; i < end; ++i){
@@ -769,14 +767,12 @@ CoverTree::CoverTree(Eigen::MatrixXd& pMatrix, int begin, int end, int truncateA
     std::iota(std::begin(idx), std::end(idx), 0);
     auto comp_x = [&dists](int a, int b) { return dists[a] > dists[b]; };
     std::sort(std::begin(idx), std::end(idx), comp_x);
-    std::cout<<"Max distance: " << dists[idx[0]] << std::endl;
 
     //4. Compute distance of every point from the mediod
     mx = pMatrix.col(idx[0]);
     dists = utils::ParallelDistanceCompute(pMatrix, mx).get_result();
 
     int scale_val = std::ceil(std::log(dists.maxCoeff())/std::log(base));
-    std::cout<<"Scale chosen: " << scale_val << std::endl;
     pointType temp = pMatrix.col(idx[0]);
     min_scale = scale_val; //-1000;
     max_scale = scale_val; //-1000;
@@ -791,11 +787,11 @@ CoverTree::CoverTree(Eigen::MatrixXd& pMatrix, int begin, int end, int truncateA
 
     int run_till = 50000<end ? 50000 : end;
     for (int i = 1; i < run_till; ++i){
-        utils::progressbar(i, run_till);
+        // utils::progressbar(i, run_till);
         if(!insert(pMatrix.col(idx[i])))
             std::cout << "Insert failed!!!" << std::endl;
     }
-    utils::progressbar(run_till, run_till);
+    // utils::progressbar(run_till, run_till);
     std::cout<<std::endl;
 
     std::cout << pMatrix.rows() << ", " << pMatrix.cols() << std::endl;
