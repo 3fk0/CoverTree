@@ -10,8 +10,8 @@ CoverTree* cover_tree_build(std::vector<pointType> pointList) {
 
     tn = std::chrono::high_resolution_clock::now();
 
-    std::cout << "Build time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count() << std::endl;
-    std::cout << "Index size: " << cTree->msg_size() << std::endl;
+    std::cout << "Insert time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count() << std::endl;
+    std::cout << "Size: " << cTree->msg_size() << " after BUILD" << std::endl;
     return cTree;
 }
 
@@ -23,7 +23,7 @@ void kNearNeighbors(CoverTree* cTree, std::vector<pointType>& testPointList) {
 
     for (int k = 0; k < 100; k += 5) {
         for (int i = 0; i < testPointList.size(); ++i) {
-            std::cout << "Query " << " with k = " << (k == 0 ? 1 : k) << std::endl;
+            std::cout << "Query " << i << "." << (k == 0 ? 1 : k) << std::endl;
             ts = std::chrono::high_resolution_clock::now();
     
             pointType& queryPt = testPointList[i];
@@ -31,6 +31,10 @@ void kNearNeighbors(CoverTree* cTree, std::vector<pointType>& testPointList) {
     
             tn = std::chrono::high_resolution_clock::now();
     
+            std::cout << "Query time: "
+                      << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count()
+                      << std::endl;
+
             std::vector<pointType> nnList(ct_nn.size());
             for (int j = 0; j < ct_nn.size(); j++) {
                 const pointType& point = ct_nn[j].first->_p;
@@ -42,9 +46,6 @@ void kNearNeighbors(CoverTree* cTree, std::vector<pointType>& testPointList) {
                 }
             }
     
-            std::cout << "Query time: "
-                      << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count()
-                      << std::endl;
         }
     }
 }
