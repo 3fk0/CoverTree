@@ -19,6 +19,7 @@
 #include <chrono>
 #include <iostream>
 #include <exception>
+#include <string.h>
 
 #include <future>
 #include <thread>
@@ -38,26 +39,34 @@ int main(int argv, char** argc)
     
     input_operation* ops = parse_input(argv, argc);
     CoverTree* cTree;
-    int queryID = 0;
-    int deleteID = 0;
-    int insertID = 0;
+    int iteration = -1;
 
     for (int i = 0; i < argv - 1; i += 2) {
+        std::string filePath = ops[i].vector_file;
+        size_t lastSlash = filePath.find_last_of('/');
+        std::string fileName = (lastSlash == std::string::npos) ? filePath : filePath.substr(lastSlash + 1);
+        size_t dashPos = fileName.find('-');
+        int fileNumber = std::stoi(fileName.substr(0, dashPos));
+
+        if (iteration < fileNumber) {
+            iteration = fileNumber;
+            std::cout << "Iteration: " << iteration << std::endl;
+        }
+
         std::vector<pointType> pointList = readPointFileList(ops[i].vector_file);
         
         switch (ops[i].type) {
             case BUILD:
                 cTree = cover_tree_build(pointList);
-                insertID++;
                 break;
             case QUERY:
-                kNearNeighbors(cTree, pointList, queryID++);
+                kNearNeighbors(cTree, pointList);
                 break;
             case INSERT:
-                insertPoints(cTree, pointList, insertID++);
+                insertPoints(cTree, pointList);
                 break;
             case DELETE:
-                deletePoints(cTree, pointList, deleteID++);
+                deletePoints(cTree, pointList);
                 break;
             default:
                 throw std::runtime_error("Unknown operation");

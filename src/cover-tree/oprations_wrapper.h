@@ -4,8 +4,8 @@
 
 CoverTree* cover_tree_build(std::vector<pointType> pointList);
 
-void kNearNeighbors(CoverTree* cTree, std::vector<pointType>& testPointList, int queryID);
+void kNearNeighbors(CoverTree* cTree, std::vector<pointType>& testPointList);
 
-void insertPoints(CoverTree* cTree, std::vector<pointType>& insertPointList, int insertID);
+void insertPoints(CoverTree* cTree, std::vector<pointType>& insertPointList);
 
-void deletePoints(CoverTree* cTree, std::vector<pointType>& deletePointList, int deleteID);
+void deletePoints(CoverTree* cTree, std::vector<pointType>& deletePointList);
