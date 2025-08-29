@@ -11,7 +11,7 @@ CoverTree* cover_tree_build(std::vector<pointType> pointList) {
     tn = std::chrono::high_resolution_clock::now();
 
     std::cout << "Insert time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count() << std::endl;
-    std::cout << "Size: " << cTree->msg_size() << " after BUILD" << std::endl;
+    std::cout << "Size: " << cTree->msg_size() << " after INSERT" << std::endl;
     return cTree;
 }
 
@@ -21,7 +21,7 @@ void kNearNeighbors(CoverTree* cTree, std::vector<pointType>& testPointList) {
     std::vector<std::vector<pointType>> ct_neighbors(testPointList.size());
     Eigen::IOFormat CommaInitFmt(Eigen::StreamPrecision, Eigen::DontAlignCols, ", ", ", ", "", "", "", "");
 
-    for (int k = 0; k < 100; k += 5) {
+    for (int k = 0; k <= 100; k += 5) {
         for (int i = 0; i < testPointList.size(); ++i) {
             std::cout << "Query " << i << "." << (k == 0 ? 1 : k) << std::endl;
             ts = std::chrono::high_resolution_clock::now();
