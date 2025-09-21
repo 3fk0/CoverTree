@@ -1,4 +1,13 @@
 #include "oprations_wrapper.h"
+#include <sys/resource.h>
+
+// Helper function to get current memory usage
+long getCurrentMemoryUsage()
+{
+    struct rusage usage;
+    getrusage(RUSAGE_SELF, &usage);
+    return usage.ru_maxrss; // in KB on Linux
+}
 
 CoverTree *cover_tree_build(std::vector<pointType> pointList)
 {
@@ -21,15 +30,23 @@ void kNearNeighbors(CoverTree *cTree, std::vector<pointType> &testPointList)
     std::chrono::high_resolution_clock::time_point ts, tn;
     Eigen::IOFormat CommaInitFmt(Eigen::StreamPrecision, Eigen::DontAlignCols, ", ", ", ", "", "", "", "");
 
+    // Pre-allocate vector to avoid repeated allocations
+    std::vector<std::pair<CoverTree::Node *, double>> ct_nn;
+    ct_nn.reserve(100); // Reserve space for maximum k value
+
     for (int k = 0; k <= 100; k += 5)
     {
+        std::cout << "Current memory usage: " << getCurrentMemoryUsage() << " KB" << std::endl;
         for (int i = 0; i < testPointList.size(); ++i)
         {
             std::cout << "Query " << i << "." << (k == 0 ? 1 : k) << std::endl;
             ts = std::chrono::high_resolution_clock::now();
 
             pointType &queryPt = testPointList[i];
-            std::vector<std::pair<CoverTree::Node *, double>> ct_nn = cTree->kNearestNeighbours(queryPt, k == 0 ? 1 : k);
+
+            // Clear previous results and get new ones
+            ct_nn.clear();
+            ct_nn = cTree->kNearestNeighbours(queryPt, k == 0 ? 1 : k);
 
             tn = std::chrono::high_resolution_clock::now();
 
@@ -37,8 +54,14 @@ void kNearNeighbors(CoverTree *cTree, std::vector<pointType> &testPointList)
                       << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count()
                       << std::endl;
 
-            for (int j = 0; j < ct_nn.size(); j++)
+            for (size_t j = 0; j < ct_nn.size(); j++)
             {
+                // Add null pointer check to prevent crashes
+                if (ct_nn[j].first == nullptr)
+                {
+                    continue;
+                }
+
                 const pointType &point = ct_nn[j].first->_p;
 
                 if (point.size() == 0)
@@ -50,6 +73,9 @@ void kNearNeighbors(CoverTree *cTree, std::vector<pointType> &testPointList)
                     std::cout << point.format(CommaInitFmt) << std::endl;
                 }
             }
+
+            // Force flush output buffer to prevent accumulation
+            std::cout.flush();
         }
     }
 }
