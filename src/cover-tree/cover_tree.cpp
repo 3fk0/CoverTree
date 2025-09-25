@@ -738,8 +738,7 @@ CoverTree::CoverTree(std::vector<pointType> &pList, int begin, int end, int trun
     for (int i = 1; i < run_till; ++i)
     {
         // utils::progressbar(i, run_till);
-        if (!insert(pList[idx[i]]))
-            std::cout << "Insert failed!!!" << std::endl;
+        insert(pList[idx[i]]);
     }
     // utils::progressbar(run_till, run_till);
     // std::cout<<std::endl;
@@ -747,11 +746,11 @@ CoverTree::CoverTree(std::vector<pointType> &pList, int begin, int end, int trun
     // std::cout << pList[0].rows() << ", " << pList.size() << std::endl;
 
     utils::parallel_for_progressbar(50000, end, [&](int i) -> void
-                                    {
+    {
     //for (int i = 50000; i < end; ++i){
         //utils::progressbar(i, end-50000);
-        if(!insert(pList[idx[i]]))
-            std::cout << "Insert failed!!!" << std::endl; });
+        insert(pList[idx[i]]);
+    });
 }
 
 // constructor: cover tree using points in the list between begin and end
@@ -791,8 +790,7 @@ CoverTree::CoverTree(Eigen::MatrixXd &pMatrix, int begin, int end, int truncateA
     for (int i = 1; i < run_till; ++i)
     {
         // utils::progressbar(i, run_till);
-        if (!insert(pMatrix.col(idx[i])))
-            std::cout << "Insert failed!!!" << std::endl;
+        !insert(pMatrix.col(idx[i]));
     }
     // utils::progressbar(run_till, run_till);
     std::cout << std::endl;
@@ -803,8 +801,8 @@ CoverTree::CoverTree(Eigen::MatrixXd &pMatrix, int begin, int end, int truncateA
                                     {
     //for (int i = 50000; i < end; ++i){
         //utils::progressbar(i, end-50000);
-        if(!insert(pMatrix.col(idx[i])))
-            std::cout << "Insert failed!!!" << std::endl; });
+        insert(pMatrix.col(idx[i]));
+           });
 }
 
 // constructor: cover tree using points in the list between begin and end
@@ -854,8 +852,7 @@ CoverTree::CoverTree(Eigen::Map<Eigen::MatrixXd> &pMatrix, int begin, int end, i
     for (int i = 1; i < run_till; ++i)
     {
         utils::progressbar(i, run_till);
-        if (!insert(pMatrix.col(idx[i])))
-            std::cout << "Insert failed!!!" << std::endl;
+        insert(pMatrix.col(idx[i]));
     }
     utils::progressbar(run_till, run_till);
     std::cout << std::endl;
@@ -864,8 +861,8 @@ CoverTree::CoverTree(Eigen::Map<Eigen::MatrixXd> &pMatrix, int begin, int end, i
                                     {
     //for (int i = begin + 1; i < end; ++i){
         //utils::progressbar(i, end-50000);
-        if(!insert(pMatrix.col(idx[i])))
-            std::cout << "Insert failed!!!" << std::endl; });
+        insert(pMatrix.col(idx[i]));
+    });
 }
 
 // constructor: cover tree using points in the list between begin and end

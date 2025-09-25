@@ -1,5 +1,6 @@
 #include "cover_tree.h"
 #include "utils.h"
+#include <sstream>
 
 
 CoverTree* cover_tree_build(std::vector<pointType> pointList);

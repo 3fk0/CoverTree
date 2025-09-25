@@ -36,10 +36,10 @@ void kNearNeighbors(CoverTree *cTree, std::vector<pointType> &testPointList)
 
     for (int k = 0; k <= 100; k += 5)
     {
-        std::cout << "Current memory usage: " << getCurrentMemoryUsage() << " KB" << std::endl;
+        std::stringstream ss;
         for (int i = 0; i < testPointList.size(); ++i)
         {
-            std::cout << "Query " << i << "." << (k == 0 ? 1 : k) << std::endl;
+            ss << "Query " << i << "." << (k == 0 ? 1 : k) << std::endl;
             ts = std::chrono::high_resolution_clock::now();
 
             pointType &queryPt = testPointList[i];
@@ -49,10 +49,10 @@ void kNearNeighbors(CoverTree *cTree, std::vector<pointType> &testPointList)
             ct_nn = cTree->kNearestNeighbours(queryPt, k == 0 ? 1 : k);
 
             tn = std::chrono::high_resolution_clock::now();
-
-            std::cout << "Query time: "
-                      << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count()
-                      << std::endl;
+    
+            ss << "Query time: "
+                << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count()
+                << std::endl;
 
             for (size_t j = 0; j < ct_nn.size(); j++)
             {
@@ -70,13 +70,11 @@ void kNearNeighbors(CoverTree *cTree, std::vector<pointType> &testPointList)
                 }
                 else
                 {
-                    std::cout << point.format(CommaInitFmt) << std::endl;
+                    ss << point.format(CommaInitFmt) << std::endl;
                 }
             }
-
-            // Force flush output buffer to prevent accumulation
-            std::cout.flush();
         }
+        std::cout << ss.str();
     }
 }
 
