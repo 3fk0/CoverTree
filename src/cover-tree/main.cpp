@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-//# define EIGEN_USE_MKL_ALL        //uncomment if available
+// # define EIGEN_USE_MKL_ALL        //uncomment if available
 
 #include <chrono>
 #include <iostream>
@@ -31,48 +31,48 @@
 #include "input_control.h"
 #include "oprations_wrapper.h"
 
-
-int main(int argv, char** argc)
+int main(int argv, char **argc)
 {
     Eigen::setNbThreads(1);
     Eigen::IOFormat CommaInitFmt(Eigen::StreamPrecision, Eigen::DontAlignCols, ", ", ", ", "", "", "[", "]");
-    
-    input_operation* ops = parse_input(argv, argc);
-    CoverTree* cTree;
+
+    std::vector<input_operation> ops = parse_input(argv, argc);
+    CoverTree *cTree;
     int iteration = -1;
 
-    for (int i = 0; i < argv - 1; i += 2) {
-        std::string filePath = ops[i].vector_file;
+    for (input_operation &op : ops)
+    {
+        std::string filePath = op.vector_file;
         size_t lastSlash = filePath.find_last_of('/');
         std::string fileName = (lastSlash == std::string::npos) ? filePath : filePath.substr(lastSlash + 1);
         size_t dashPos = fileName.find('-');
         int fileNumber = std::stoi(fileName.substr(0, dashPos));
 
-        if (iteration < fileNumber) {
+        if (iteration < fileNumber)
+        {
             iteration = fileNumber;
             std::cout << "Iteration: " << iteration << std::endl;
         }
 
-        std::vector<pointType> pointList = readPointFileList(ops[i].vector_file);
-        
-        switch (ops[i].type) {
-            case BUILD:
-                cTree = cover_tree_build(pointList);
-                break;
-            case QUERY:
-                kNearNeighbors(cTree, pointList);
-                break;
-            case INSERT:
-                insertPoints(cTree, pointList);
-                break;
-            case DELETE:
-                deletePoints(cTree, pointList);
-                break;
-            default:
-                throw std::runtime_error("Unknown operation");
+        std::vector<pointType> pointList = readPointFileList(op.vector_file);
+        switch (op.type)
+        {
+        case BUILD:
+            cTree = cover_tree_build(pointList);
+            break;
+        case QUERY:
+            kNearNeighbors(cTree, pointList, op.ks_to_query);
+            break;
+        case INSERT:
+            insertPoints(cTree, pointList);
+            break;
+        case DELETE:
+            deletePoints(cTree, pointList);
+            break;
+        default:
+            throw std::runtime_error("Unknown operation");
         }
     }
 
     return 0;
 }
-
