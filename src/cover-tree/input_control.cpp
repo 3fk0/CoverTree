@@ -1,12 +1,13 @@
 #include "input_control.h"
 
-std::vector<input_operation> parse_input(int argc, char *argv[])
+input_control parse_input(int argc, char *argv[])
 {
     if (argc < 2)
     {
         throw std::runtime_error("[Input Control]: Not enough arguments");
     }
 
+    input_control ctrl;
     std::vector<input_operation> op;
     std::vector<int> ks_to_query;
     bool has_build = false;
@@ -14,9 +15,12 @@ std::vector<input_operation> parse_input(int argc, char *argv[])
     for (int i = 1; i < argc; i += 2)
     {
         input_operation new_op;
-        if (strcmp(argv[i], "-k") == 0)
+        std::string param = argv[i];
+        std::string value = (i + 1 < argc) ? argv[i + 1] : "";
+        
+        if (param == "-k")
         {
-            int k = std::stoi(argv[i + 1]);
+            int k = std::stoi(value);
             if (k <= 0)
             {
                 throw std::runtime_error("[Input Control]: k must be a positive integer");
@@ -24,7 +28,7 @@ std::vector<input_operation> parse_input(int argc, char *argv[])
             ks_to_query.push_back(k);
             continue;
         }
-        else if (strcmp(argv[i], "-b") == 0)
+        else if (param == "-b")
         {
             if (has_build)
             {
@@ -33,44 +37,54 @@ std::vector<input_operation> parse_input(int argc, char *argv[])
             has_build = true;
             new_op.type = BUILD;
         }
-        else if (strcmp(argv[i], "-q") == 0)
+        else if (param == "-q")
         {
-            new_op.type = QUERY;
+            op.push_back({QUERY, value});
         }
-        else if (strcmp(argv[i], "-i") == 0)
+        else if (param == "-i")
         {
-            new_op.type = INSERT;
+            op.push_back({INSERT, value});
         }
-        else if (strcmp(argv[i], "-d") == 0)
+        else if (param == "-d")
         {
-            new_op.type = DELETE;
+            op.push_back({DELETE, value});
+        }
+        else if (param == "-o")
+        {
+            ctrl.output_file = value;
+            i -= 1; // Adjust index since -o does not have a paired operation
+            continue;
+        }
+        else if (param == "-h")
+        {
+            help();
+            exit(0);
         }
         else
         {
             help();
             throw std::runtime_error("[Input Control]: Unknown operation " + std::string(argv[i]));
         }
-        new_op.vector_file = argv[i + 1];
-        new_op.ks_to_query = ks_to_query;
-        op.push_back(new_op);
     }
 
-    return op;
+    ctrl.operations = op;
+    ctrl.ks_to_query = ks_to_query;
+    return ctrl;
 }
 
-void input_operation_destructor(input_operation *op)
+void input_operation_destructor(input_operation *ctrl)
 {
-    free(op);
+    free(ctrl);
 }
 
-void help()
-{
-    std::cout << "Usage: ./main [-k <number>] -b <path_to_train_points> [[-q <path_to_test_points>] [-i <path_to_insert_points>] [-d <path_to_delete_points>]]" << std::endl;
+void help() {
+    std::cout << "Usage: ./cover-tree -b <path_to_train_points> [[-q <path_to_test_points>] [-i <path_to_insert_points>] [-d <path_to_delete_points>]] -o <output-file>" << std::endl;
     std::cout << "Options:" << std::endl;
     std::cout << "-k : Specify the k values for k-NN queries (can be used multiple times)" << std::endl;
     std::cout << "-b : Build the cover tree from the given points" << std::endl;
     std::cout << "-q : Query the cover tree with the given points" << std::endl;
     std::cout << "-i : Insert the given points into the cover tree" << std::endl;
     std::cout << "-d : Delete the given points from the cover tree" << std::endl;
+    std::cout << "-o : Specify the output file for results" << std::endl;
     std::cout << "-h : Show this help message" << std::endl;
 }

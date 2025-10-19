@@ -17,12 +17,17 @@ enum input_type
 struct input_operation
 {
     input_type type;
-    char *vector_file;
+    std::string vector_file;
+};
+
+struct input_control {
+    std::vector<input_operation> operations;
+    std::string output_file;
     std::vector<int> ks_to_query;
 };
 
-std::vector<input_operation> parse_input(int argc, char *argv[]);
+input_control parse_input(int argc, char* argv[]);
 
-void input_operation_destructor(input_operation *op);
+void input_operation_destructor(input_control* ctrl);
 
 void help();
