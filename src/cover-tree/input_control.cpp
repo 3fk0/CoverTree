@@ -34,8 +34,8 @@ input_control parse_input(int argc, char *argv[])
             {
                 throw std::runtime_error("[Input Control]: Multiple build operations");
             }
+            op.push_back({BUILD, value});
             has_build = true;
-            new_op.type = BUILD;
         }
         else if (param == "-q")
         {
@@ -52,8 +52,6 @@ input_control parse_input(int argc, char *argv[])
         else if (param == "-o")
         {
             ctrl.output_file = value;
-            i -= 1; // Adjust index since -o does not have a paired operation
-            continue;
         }
         else if (param == "-h")
         {
@@ -63,7 +61,8 @@ input_control parse_input(int argc, char *argv[])
         else
         {
             help();
-            throw std::runtime_error("[Input Control]: Unknown operation " + std::string(argv[i]));
+            std::cout << "[Input Control]: Unknown operation " << param << " " << value << std::endl;
+            throw std::runtime_error("[Input Control]: Unknown operation " + param + " " + value);
         }
     }
 

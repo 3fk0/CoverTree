@@ -27,7 +27,6 @@
 #include <Eigen/Core>
 #define EIGEN_DONT_PARALLELIZE
 
-// User header
 #include "input_control.h"
 #include "oprations_wrapper.h"
 
@@ -53,7 +52,7 @@ int main(int argv, char **argc)
             iteration = fileNumber;
             output_file << "Iteration: " << iteration << std::endl;
         }
-
+        
         std::vector<pointType> pointList = readPointFileList(operation.vector_file);
 
         switch (operation.type) {
@@ -73,6 +72,8 @@ int main(int argv, char **argc)
                 throw std::runtime_error("Unknown operation");
         }
     }
+
+    output_file.close();
 
     return 0;
 }
