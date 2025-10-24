@@ -34,13 +34,14 @@ int main(int argv, char **argc)
 {
     Eigen::setNbThreads(1);
     Eigen::IOFormat CommaInitFmt(Eigen::StreamPrecision, Eigen::DontAlignCols, ", ", ", ", "", "", "[", "]");
-    
+
     input_control ctrl = parse_input(argv, argc);
-    std::ofstream output_file = std::ofstream(ctrl.output_file);
-    CoverTree* cTree;
+    FILE *output_file = fopen(ctrl.output_file.c_str(), "w");
+    CoverTree *cTree;
     int iteration = -1;
 
-    for (input_operation operation : ctrl.operations) {
+    for (input_operation operation : ctrl.operations)
+    {
         std::string filePath = operation.vector_file;
         size_t lastSlash = filePath.find_last_of('/');
         std::string fileName = (lastSlash == std::string::npos) ? filePath : filePath.substr(lastSlash + 1);
@@ -50,30 +51,31 @@ int main(int argv, char **argc)
         if (iteration < fileNumber)
         {
             iteration = fileNumber;
-            output_file << "Iteration: " << iteration << std::endl;
+            fprintf(output_file, "Iteration: %d\n", iteration);
         }
-        
+
         std::vector<pointType> pointList = readPointFileList(operation.vector_file);
 
-        switch (operation.type) {
-            case BUILD:
-                cTree = cover_tree_build(pointList, output_file);
-                break;
-            case QUERY:
-                kNearNeighbors(cTree, pointList, ctrl.ks_to_query, output_file);
-                break;
-            case INSERT:
-                insertPoints(cTree, pointList, output_file);
-                break;
-            case DELETE:
-                deletePoints(cTree, pointList, output_file);
-                break;
-            default:
-                throw std::runtime_error("Unknown operation");
+        switch (operation.type)
+        {
+        case BUILD:
+            cTree = cover_tree_build(pointList, output_file);
+            break;
+        case QUERY:
+            kNearNeighbors(cTree, pointList, ctrl.ks_to_query, output_file);
+            break;
+        case INSERT:
+            insertPoints(cTree, pointList, output_file);
+            break;
+        case DELETE:
+            deletePoints(cTree, pointList, output_file);
+            break;
+        default:
+            throw std::runtime_error("Unknown operation");
         }
     }
 
-    output_file.close();
+    fclose(output_file);
 
     return 0;
 }

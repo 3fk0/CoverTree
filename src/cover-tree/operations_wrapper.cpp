@@ -9,7 +9,7 @@ long getCurrentMemoryUsage()
     return usage.ru_maxrss; // in KB on Linux
 }
 
-CoverTree *cover_tree_build(std::vector<pointType> pointList, std::ofstream &output_file)
+CoverTree *cover_tree_build(std::vector<pointType> pointList, FILE *output_file)
 {
     std::chrono::high_resolution_clock::time_point ts, tn;
     CoverTree *cTree;
@@ -20,12 +20,12 @@ CoverTree *cover_tree_build(std::vector<pointType> pointList, std::ofstream &out
 
     tn = std::chrono::high_resolution_clock::now();
 
-    output_file << "Insert time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count() << std::endl;
-    output_file << "Size: " << cTree->msg_size() << " after INSERT" << std::endl;
+    fprintf(output_file, "Insert time: %ld\n", std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count());
+    fprintf(output_file, "Size: %d after INSERT\n", cTree->msg_size());
     return cTree;
 }
 
-void kNearNeighbors(CoverTree *cTree, std::vector<pointType> &testPointList, std::vector<int> ks_to_query, std::ofstream &output_file)
+void kNearNeighbors(CoverTree *cTree, std::vector<pointType> &testPointList, std::vector<int> ks_to_query, FILE *output_file)
 {
     std::chrono::high_resolution_clock::time_point ts, tn;
     Eigen::IOFormat CommaInitFmt(Eigen::StreamPrecision, Eigen::DontAlignCols, ", ", ", ", "", "", "", "");
@@ -36,10 +36,9 @@ void kNearNeighbors(CoverTree *cTree, std::vector<pointType> &testPointList, std
 
     for (int k : ks_to_query)
     {
-        std::stringstream ss;
         for (int i = 0; i < testPointList.size(); ++i)
         {
-            ss << "Query " << i << "." << k << std::endl;
+            fprintf(output_file, "Query %d.%d\n", i, k);
             ts = std::chrono::high_resolution_clock::now();
 
             pointType &queryPt = testPointList[i];
@@ -50,9 +49,7 @@ void kNearNeighbors(CoverTree *cTree, std::vector<pointType> &testPointList, std
 
             tn = std::chrono::high_resolution_clock::now();
 
-            ss << "Query time: "
-               << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count()
-               << std::endl;
+            fprintf(output_file, "Query time: %ld\n", std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count());
 
             for (size_t j = 0; j < ct_nn.size(); j++)
             {
@@ -70,15 +67,16 @@ void kNearNeighbors(CoverTree *cTree, std::vector<pointType> &testPointList, std
                 }
                 else
                 {
-                    ss << point.format(CommaInitFmt) << std::endl;
+                    std::stringstream ss;
+                    ss << point.format(CommaInitFmt);
+                    fprintf(output_file, "%s\n", ss.str().c_str());
                 }
             }
         }
-        output_file << ss.str();
     }
 }
 
-void insertPoints(CoverTree *cTree, std::vector<pointType> &insertPointList, std::ofstream &output_file)
+void insertPoints(CoverTree *cTree, std::vector<pointType> &insertPointList, FILE *output_file)
 {
     std::chrono::high_resolution_clock::time_point ts, tn;
     ts = std::chrono::high_resolution_clock::now();
@@ -90,11 +88,11 @@ void insertPoints(CoverTree *cTree, std::vector<pointType> &insertPointList, std
     }
     tn = std::chrono::high_resolution_clock::now();
 
-    output_file << "Insert time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count() << std::endl;
-    output_file << "Size: " << cTree->msg_size() << " after INSERT" << std::endl;
+    fprintf(output_file, "Insert time: %ld\n", std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count());
+    fprintf(output_file, "Size: %d after INSERT\n", cTree->msg_size());
 }
 
-void deletePoints(CoverTree *cTree, std::vector<pointType> &deletePointList, std::ofstream &output_file)
+void deletePoints(CoverTree *cTree, std::vector<pointType> &deletePointList, FILE *output_file)
 {
     std::chrono::high_resolution_clock::time_point ts, tn;
     ts = std::chrono::high_resolution_clock::now();
@@ -106,6 +104,6 @@ void deletePoints(CoverTree *cTree, std::vector<pointType> &deletePointList, std
         cTree->remove(queryPt);
     }
     tn = std::chrono::high_resolution_clock::now();
-    output_file << "Delete time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count() << std::endl;
-    output_file << "Size: " << cTree->msg_size() << " after DELETE" << std::endl;
+    fprintf(output_file, "Delete time: %ld\n", std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count());
+    fprintf(output_file, "Size: %d after DELETE\n", cTree->msg_size());
 }
