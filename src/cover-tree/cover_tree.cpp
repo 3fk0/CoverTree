@@ -587,7 +587,7 @@ void CoverTree::PrePost(CoverTree::Node *&current, char *&pre, char *&post)
     post += sizeof(unsigned); // Delete top element of POST
 }
 
-unsigned CoverTree::msg_size() const
+unsigned long CoverTree::msg_size() const
 {
     return 2 * sizeof(unsigned) + sizeof(pointType::Scalar) * D * N + sizeof(int) * N + sizeof(unsigned) * N;
 }
@@ -746,11 +746,10 @@ CoverTree::CoverTree(std::vector<pointType> &pList, int begin, int end, int trun
     // std::cout << pList[0].rows() << ", " << pList.size() << std::endl;
 
     utils::parallel_for_progressbar(50000, end, [&](int i) -> void
-    {
+                                    {
     //for (int i = 50000; i < end; ++i){
         //utils::progressbar(i, end-50000);
-        insert(pList[idx[i]]);
-    });
+        insert(pList[idx[i]]); });
 }
 
 // constructor: cover tree using points in the list between begin and end
@@ -801,8 +800,7 @@ CoverTree::CoverTree(Eigen::MatrixXd &pMatrix, int begin, int end, int truncateA
                                     {
     //for (int i = 50000; i < end; ++i){
         //utils::progressbar(i, end-50000);
-        insert(pMatrix.col(idx[i]));
-           });
+        insert(pMatrix.col(idx[i])); });
 }
 
 // constructor: cover tree using points in the list between begin and end
@@ -861,8 +859,7 @@ CoverTree::CoverTree(Eigen::Map<Eigen::MatrixXd> &pMatrix, int begin, int end, i
                                     {
     //for (int i = begin + 1; i < end; ++i){
         //utils::progressbar(i, end-50000);
-        insert(pMatrix.col(idx[i]));
-    });
+        insert(pMatrix.col(idx[i])); });
 }
 
 // constructor: cover tree using points in the list between begin and end

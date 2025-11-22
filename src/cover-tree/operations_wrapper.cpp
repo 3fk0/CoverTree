@@ -21,7 +21,7 @@ CoverTree *cover_tree_build(std::vector<pointType> pointList, FILE *output_file)
     tn = std::chrono::high_resolution_clock::now();
 
     fprintf(output_file, "Insert time: %ld\n", std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count());
-    fprintf(output_file, "Size: %d after INSERT\n", cTree->msg_size());
+    fprintf(output_file, "Size: %lo after INSERT\n", cTree->msg_size());
     return cTree;
 }
 
@@ -89,7 +89,7 @@ void insertPoints(CoverTree *cTree, std::vector<pointType> &insertPointList, FIL
     tn = std::chrono::high_resolution_clock::now();
 
     fprintf(output_file, "Insert time: %ld\n", std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count());
-    fprintf(output_file, "Size: %d after INSERT\n", cTree->msg_size());
+    fprintf(output_file, "Size: %lo after INSERT\n", cTree->msg_size());
 }
 
 void deletePoints(CoverTree *cTree, std::vector<pointType> &deletePointList, FILE *output_file)
@@ -105,5 +105,5 @@ void deletePoints(CoverTree *cTree, std::vector<pointType> &deletePointList, FIL
     }
     tn = std::chrono::high_resolution_clock::now();
     fprintf(output_file, "Delete time: %ld\n", std::chrono::duration_cast<std::chrono::nanoseconds>(tn - ts).count());
-    fprintf(output_file, "Size: %d after DELETE\n", cTree->msg_size());
+    fprintf(output_file, "Size: %lo after DELETE\n", cTree->msg_size());
 }
